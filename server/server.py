@@ -6,6 +6,12 @@ import socket
 import signal
 import errno
 
+from connection import Connection
+
+logging.basicConfig(
+            level=logging.DEBUG, 
+            format='%(asctime)-15s %(levelname)s %(message)s')
+
 STOPSIGNALS = (signal.SIGINT, signal.SIGTERM)
 NONBLOCKING = (errno.EAGAIN, errno.EWOULDBLOCK)
 
@@ -53,7 +59,7 @@ class Server(object):
             watcher.start()
         self.sock.listen(socket.SOMAXCONN)
         self.listen_watcher.start()
-        logging.debug("Server::start - starting server")
+        logging.debug("Server.start - starting server")
         self.loop.start()
 
     def handle_connect(self):
@@ -66,6 +72,6 @@ class Server(object):
                 logging.error(
                     "error [%s] accepting a connection" % err.args[1])    
         else:
-            logging.info("connection from %s:%d" % address)    
+            logging.info("Server.handle_connect - connection from %s:%d" % address)    
             self.connections[address] = sock
         
