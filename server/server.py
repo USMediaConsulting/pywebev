@@ -74,4 +74,9 @@ class Server(object):
         else:
             logging.info("Server.handle_connect - connection from %s:%d" % address)    
             self.connections[address] = sock
+
+if __name__ == '__main__' :
+    s = Server(('127.0.0.1', 8989))
+    s.start()
+
         
