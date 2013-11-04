@@ -73,7 +73,7 @@ class Server(object):
                     "error [%s] accepting a connection" % err.args[1])    
         else:
             logging.info("Server.handle_connect - connection from %s:%d" % address)    
-            self.connections[address] = sock
+            conn = Connection(sock, self.loop, address)
 
 if __name__ == '__main__' :
     s = Server(('127.0.0.1', 8989))
