@@ -6,6 +6,7 @@ import socket
 import signal
 import errno
 
+from register import register
 from http_parser.parser import HttpParser
 
 NONBLOCKING = (errno.EAGAIN, errno.EWOULDBLOCK)
@@ -85,15 +86,23 @@ class Connection(object):
                      self.read_buf)
                 self.reset(pyev.EV_READ)
             else :
-                logging.debug('Connection.handle_read - requesting write %d' % self.id)
                 # we got a full request
                 self.read_buf = ''
-                # TODO match the verb with URI and call
+                # match the verb with URI and call
                 # after that register for write to send response
+                verb = parser.get_method()
+                url = parser.get_url()
+                logging.debug('Connection.handle_read - id  %d - method is %s and url %s' % 
+                    (self.id, verb, url))
+                call, keyword_args = register.get_callable(
+                                        url, verb)
+                logging.debug('Connection.handle_read - kargs=%s' % keyword_args)
+                call(*[], **keyword_args)                
                 body = '{"result": "hello"}\r\n'
                 self.write_buf = 'HTTP/1.1 200 OK\r\nContent-Length: %d\r\nHost: localhost\r\n' \
                                  'Content-Type: application/json\r\nConnection: close\r\n\r\n%s' % \
                                  (len(body), body)
+                logging.debug('Connection.handle_read - requesting write %d' % self.id)
                 self.reset(pyev.EV_WRITE)
 
     def handle_write(self):
