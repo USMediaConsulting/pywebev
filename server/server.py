@@ -6,6 +6,7 @@ import socket
 import signal
 import errno
 
+from register import register, post, get
 from connection import Connection
 
 logging.basicConfig(
@@ -76,6 +77,21 @@ class Server(object):
             conn = Connection(sock, self.loop, address)
 
 if __name__ == '__main__' :
+
+    class Handler(object):
+        
+        def __init__(self):
+            pass
+
+        @post('/path/<name>/test')
+        def foo(name):
+            logging.debug('foo : %s' % name)
+        
+        @get('/path/<name>/test/<qualifier>')
+        def bar(name, qualifier):
+            logging.debug('bar : %s %s' % (name, qualifier))
+
+
     s = Server(('127.0.0.1', 8989))
     s.start()
 
