@@ -4,8 +4,8 @@ import logging
 
 class Register(object):
     
-    POST    = 0
-    GET     = 1
+    POST    = 'POST'
+    GET     = 'GET'
 
     def __init__(self):
         self.post_callables = {}
