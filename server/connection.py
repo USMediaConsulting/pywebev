@@ -92,7 +92,7 @@ class Connection(object):
                 # match the verb with URI and call
                 # after that register for write to send response
                 verb = parser.get_method()
-                url = parser.get_url()
+                url = parser.get_path()
                 logging.debug('Connection.handle_read - id  %d - method is %s and url %s' % 
                     (self.id, verb, url))
                 call, keyword_args = register.get_callable(url, verb)
