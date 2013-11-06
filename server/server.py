@@ -77,6 +77,7 @@ class Server(object):
             conn = Connection(sock, self.loop, address)
 
 if __name__ == '__main__' :
+    from response import HttpResponse
 
     class Handler(object):
         
@@ -84,13 +85,20 @@ if __name__ == '__main__' :
             pass
 
         @post('/path/<name>/test')
-        def foo(name):
-            logging.debug('foo : %s' % name)
-        
-        @get('/path/<name>/test/<qualifier>')
-        def bar(name, qualifier):
-            logging.debug('bar : %s %s' % (name, qualifier))
+        def foo(name, http_request):
+            r = HttpResponse()
+            r.headers['Host'] = 'localhost'
+            r.headers['Content-Type'] = 'application/json'
+            r.body = '{"status": %s}' % name
+            return r
 
+        @get('/path/<name>/test/<qualifier>')
+        def bar(name, qualifier, http_request):
+            r = HttpResponse()
+            r.headers['Host'] = 'localhost'
+            r.headers['Content-Type'] = 'application/json'
+            r.body = '{"status": %s}' % qualifier
+            return r
 
     s = Server(('127.0.0.1', 8989))
     s.start()
