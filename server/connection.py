@@ -107,7 +107,7 @@ class Connection(object):
                     keyword_args['http_request'] = parser
                     logging.debug('Connection.handle_read - kargs=%s' % keyword_args)
                     try :
-                        response = call(*[], **keyword_args)
+                        response = call(*[register.handler,], **keyword_args)
                         self.write_buf = response.to_string()
                     except :
                         err = HttpResponse()

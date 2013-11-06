@@ -8,6 +8,7 @@ class Register(object):
     GET     = 'GET'
 
     def __init__(self):
+        self.handler = None
         self.post_callables = {}
         self.get_callables = {}
         self.post_expressions = []

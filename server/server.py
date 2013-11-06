@@ -18,7 +18,8 @@ NONBLOCKING = (errno.EAGAIN, errno.EWOULDBLOCK)
 
 class Server(object):
 
-    def __init__(self, bind_host):
+    def __init__(self, bind_host, handler):
+        register.handler = handler
         self.bind_host = bind_host
         self.connections = {}
         self.loop = pyev.default_loop()
@@ -77,6 +78,7 @@ class Server(object):
             conn = Connection(sock, self.loop, address)
 
 if __name__ == '__main__' :
+    
     from response import HttpResponse
 
     class Handler(object):
@@ -85,18 +87,23 @@ if __name__ == '__main__' :
             pass
 
         @post('/path/<name>/test')
-        def foo(name, http_request):
+        def foo(self, name, http_request):
             r = HttpResponse()
             r.headers['Host'] = 'localhost'
             r.headers['Content-Type'] = 'application/json'
             r.body = '{"status": %s}' % name
             return r
-
+        
         @get('/path/<name>/test/<qualifier>')
-        def bar(name, qualifier, http_request):
-            raise 'errror'
+        def bar(self, name, qualifier, http_request):
+            r = HttpResponse()
+            r.headers['Host'] = 'localhost'
+            r.headers['Content-Type'] = 'application/json'
+            r.body = '{"status": %s}' % qualifier
+            return r
 
-    s = Server(('127.0.0.1', 8989))
+    h = Handler()
+    s = Server(('127.0.0.1', 8989), h)
     s.start()
 
         
