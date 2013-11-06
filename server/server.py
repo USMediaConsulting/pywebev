@@ -94,11 +94,7 @@ if __name__ == '__main__' :
 
         @get('/path/<name>/test/<qualifier>')
         def bar(name, qualifier, http_request):
-            r = HttpResponse()
-            r.headers['Host'] = 'localhost'
-            r.headers['Content-Type'] = 'application/json'
-            r.body = '{"status": %s}' % qualifier
-            return r
+            raise 'errror'
 
     s = Server(('127.0.0.1', 8989))
     s.start()
