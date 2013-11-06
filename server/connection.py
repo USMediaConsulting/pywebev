@@ -94,14 +94,11 @@ class Connection(object):
                 url = parser.get_url()
                 logging.debug('Connection.handle_read - id  %d - method is %s and url %s' % 
                     (self.id, verb, url))
-                call, keyword_args = register.get_callable(
-                                        url, verb)
+                call, keyword_args = register.get_callable(url, verb)
+                keyword_args['http_request'] = parser
                 logging.debug('Connection.handle_read - kargs=%s' % keyword_args)
-                call(*[], **keyword_args)                
-                body = '{"result": "hello"}\r\n'
-                self.write_buf = 'HTTP/1.1 200 OK\r\nContent-Length: %d\r\nHost: localhost\r\n' \
-                                 'Content-Type: application/json\r\nConnection: close\r\n\r\n%s' % \
-                                 (len(body), body)
+                response = call(*[], **keyword_args)
+                self.write_buf = response.to_string()
                 logging.debug('Connection.handle_read - requesting write %d' % self.id)
                 self.reset(pyev.EV_WRITE)
 
