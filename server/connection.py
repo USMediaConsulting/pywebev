@@ -8,6 +8,7 @@ import errno
 
 from register import register
 from http_parser.parser import HttpParser
+from response import HttpResponse
 
 NONBLOCKING = (errno.EAGAIN, errno.EWOULDBLOCK)
 
@@ -95,10 +96,26 @@ class Connection(object):
                 logging.debug('Connection.handle_read - id  %d - method is %s and url %s' % 
                     (self.id, verb, url))
                 call, keyword_args = register.get_callable(url, verb)
-                keyword_args['http_request'] = parser
-                logging.debug('Connection.handle_read - kargs=%s' % keyword_args)
-                response = call(*[], **keyword_args)
-                self.write_buf = response.to_string()
+                if not call :
+                    err = HttpResponse()
+                    err.status_code = 404
+                    err.status_string = 'Not Found'
+                    err.headers['Content-Type'] = 'application/txt'                    
+                    err.body = 'URI Not Found\r\n'
+                    self.write_buf = err.to_string()
+                else :        
+                    keyword_args['http_request'] = parser
+                    logging.debug('Connection.handle_read - kargs=%s' % keyword_args)
+                    try :
+                        response = call(*[], **keyword_args)
+                        self.write_buf = response.to_string()
+                    except :
+                        err = HttpResponse()
+                        err.status_code = 500
+                        err.status_string = 'Internal Server Error'
+                        err.headers['Content-Type'] = 'application/txt'                    
+                        err.body = 'Upsssss.\r\n'
+                        self.write_buf = err.to_string()
                 logging.debug('Connection.handle_read - requesting write %d' % self.id)
                 self.reset(pyev.EV_WRITE)
 
