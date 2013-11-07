@@ -9,10 +9,6 @@ import errno
 from register import register, post, get
 from connection import Connection
 
-logging.basicConfig(
-            level=logging.DEBUG, 
-            format='%(asctime)-15s %(levelname)s %(message)s')
-
 STOPSIGNALS = (signal.SIGINT, signal.SIGTERM)
 NONBLOCKING = (errno.EAGAIN, errno.EWOULDBLOCK)
 
